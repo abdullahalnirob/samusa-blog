@@ -30,9 +30,14 @@ const AddBlog = () => {
       longDescription,
     };
     axios
-      .post("http://localhost:2000/createPost", blogData)
+      .post("http://localhost:2000/api/createPost", blogData)
       .then(() => {
         toast.success("Successfully blog added!");
+        setTitle("");
+        setCategory("");
+        setImageUrl("");
+        setShortDescription("");
+        setLongDescription("");
       })
       .catch(() => {
         toast.error("Something error! Blog is not create!");
