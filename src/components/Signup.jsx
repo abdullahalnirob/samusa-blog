@@ -4,7 +4,8 @@ import TextField from "@mui/material/TextField";
 import useAuth from "../hook/useAuth";
 import toast from "react-hot-toast";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../../Assign-10/client/src/firebase/firebase.config";
+import { auth } from "../firebase/firebase";
+
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -119,7 +120,7 @@ const Signup = () => {
             src="https://static.vecteezy.com/system/resources/thumbnails/022/484/509/small_2x/google-lens-icon-logo-symbol-free-png.png"
             alt=""
           />
-          Login with Google
+          Continue with Google
         </button>
         <button
           onClick={handleClick}

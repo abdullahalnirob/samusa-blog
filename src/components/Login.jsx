@@ -4,13 +4,14 @@ import TextField from "@mui/material/TextField";
 import useAuth from "../hook/useAuth";
 import toast from "react-hot-toast";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../../../Assign-10/client/src/firebase/firebase.config";
+import { auth } from "../firebase/firebase";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { SignIn } = useAuth();
+  const { SignIn,setUser } = useAuth();
 
   const handleLogin = () => {
     SignIn(email, password)

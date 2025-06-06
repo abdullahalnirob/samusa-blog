@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, MenuItem } from "@mui/material";
-
+import axios from "axios";
+import toast from "react-hot-toast";
 const categories = [
   "Technology",
   "Travel",
@@ -21,13 +22,21 @@ const AddBlog = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({
+    const blogData = {
       title,
       imageUrl,
       category,
       shortDescription,
       longDescription,
-    });
+    };
+    axios
+      .post("http://localhost:2000/createPost", blogData)
+      .then(() => {
+        toast.success("Successfully blog added!");
+      })
+      .catch(() => {
+        toast.error("Something error! Blog is not create!");
+      });
   };
 
   return (
