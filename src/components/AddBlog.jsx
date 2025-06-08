@@ -30,7 +30,7 @@ const AddBlog = () => {
       longDescription,
     };
     axios
-      .post("http://localhost:2000/api/createPost", blogData)
+      .post("http://localhost:2000/api/addblog", blogData)
       .then(() => {
         toast.success("Successfully blog added!");
         setTitle("");

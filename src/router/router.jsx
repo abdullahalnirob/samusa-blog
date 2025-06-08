@@ -6,6 +6,7 @@ import Signup from "../components/Signup";
 import NotFound from "../components/NotFound";
 import AddBlog from "../components/AddBlog";
 import PrivateRoute from "./PrivateRoute";
+import AllBlogs from "../components/AllBlogs";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -14,6 +15,10 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <RootLayout />,
+      },
+      {
+        path: "/all-blogs",
+        element: <AllBlogs />,
       },
       {
         path: "/login",
@@ -37,4 +42,5 @@ export const router = createBrowserRouter([
     path: "*",
     element: <NotFound />,
   },
+  
 ]);
