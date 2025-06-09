@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import useAuth from "../hook/useAuth";
 
 const RecentPosts = () => {
-  const { user } = useAuth();
-  console.log(user.displaName)
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,14 +55,7 @@ const RecentPosts = () => {
                   : blog.shortDescription}
               </p>
 
-              {/* 👇 Author and Category */}
               <div className="flex justify-between items-center mb-4">
-                <span className="text-sm text-gray-500">
-                  ✍️ By{" "}
-                  <span className="font-medium text-gray-700">
-                    {user.displayName}
-                  </span>
-                </span>
                 <span className="inline-block px-3 py-1 text-xs bg-green-100 text-green-600 rounded-full">
                   {blog.category}
                 </span>

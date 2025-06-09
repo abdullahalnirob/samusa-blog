@@ -1,25 +1,56 @@
 import { CircularProgress } from "@mui/material";
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
+const categories = [
+  "All",
+  "Technology",
+  "Travel",
+  "Food",
+  "Lifestyle",
+  "Business",
+  "Health",
+  "Education",
+  "Entertainment",
+];
+
 const AllBlogs = () => {
   const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true); // 👈 loading state
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     axios
       .get("http://localhost:2000/api/allBlogs")
       .then((data) => {
         setBlogs(data.data.blogs);
-        setLoading(false); // ✅ stop loading
+        setFilteredBlogs(data.data.blogs);
+        setLoading(false);
       })
       .catch((err) => {
         toast.error(`Failed to load blogs!`);
-        setLoading(false); // ✅ still stop loading on error
+        setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    const filtered = blogs.filter((blog) => {
+      const matchesSearch =
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.shortDescription.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === "All" ||
+        blog.category.toLowerCase() === selectedCategory.toLowerCase();
+
+      return matchesSearch && matchesCategory;
+    });
+    setFilteredBlogs(filtered);
+  }, [searchTerm, selectedCategory, blogs]);
 
   if (loading) {
     return (
@@ -38,13 +69,30 @@ const AllBlogs = () => {
         <input
           type="text"
           placeholder="Search Blog..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="mt-5 w-full mx-auto block px-5 py-3 rounded-md outline-none ring-1 bg-white ring-gray-300 focus:ring-[#10B981] transition duration-200"
         />
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-sm border ${
+                selectedCategory === cat
+                  ? "bg-[#10B981] text-white border-[#10B981]"
+                  : "text-gray-600 border-gray-300 hover:bg-gray-100"
+              } transition duration-200`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {Array.isArray(blogs) &&
-          blogs.map((blog, i) => (
+        {filteredBlogs.length > 0 ? (
+          filteredBlogs.map((blog, i) => (
             <div
               key={i}
               className="bg-white ring-1 ring-gray-300 shadow rounded overflow-hidden transition duration-300"
@@ -63,10 +111,13 @@ const AllBlogs = () => {
                     ? blog.shortDescription.slice(0, 100) + "..."
                     : blog.shortDescription}
                 </p>
-                <span className="inline-block px-3 py-1 text-xs bg-green-100 text-green-600 rounded-full">
-                  {blog.category}
-                </span>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="inline-block px-3 py-1 text-xs bg-green-100 text-green-600 rounded-full">
+                    {blog.category}
+                  </span>
+                </div>
               </div>
+
               <div className="flex justify-between items-center px-5 py-3 border-t border-gray-300">
                 <Link to={`/blog/${blog._id}`}>
                   <button className="mb-3 mx-3 text-white cursor-pointer px-5 py-2 rounded bg-[#10B981] hover:bg-[#458d75] duration-200">
@@ -78,7 +129,12 @@ const AllBlogs = () => {
                 </button>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <p className="text-center col-span-3 text-gray-500">
+            No blogs found!
+          </p>
+        )}
       </div>
     </div>
   );
