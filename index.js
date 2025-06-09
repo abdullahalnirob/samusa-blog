@@ -17,7 +17,7 @@ const uri = process.env.MONGO_URI
 const client = new MongoClient(uri)
 const database = client.db("Blog")
 const collection = database.collection("blogs")
-
+const comments = database.collection("comments")
 async function run() {
     try {
         await client.connect();
@@ -60,18 +60,16 @@ app.get("/api/blog/:id", async (req, res) => {
     }
 
 })
-// app.get("/api/blog/:id", async (req, res) => {
-//     try {
-//         const blog = await collection.findOne({ _id: new ObjectId(req.params.id) });
-//         if (!blog) {
-//             return res.status(404).send({ message: "Blog not found." });
-//         }
-//         res.status(200).send({ blog: blog });
-//     } catch (error) {
-//         res.status(400).send({ message: "Something went wrong on the server.", error: error.message });
-//     }
-// });
 
+app.post("/api/addcomment", async (req, res) => {
+    try {
+        const comment = req.body;
+        const result = await comments.insertOne(comment);
+        res.status(200).send({ comment: result });
+    } catch (error) {
+        res.status(400).send({ message: "Data is not inserted" });
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
