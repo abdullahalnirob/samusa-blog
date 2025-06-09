@@ -8,6 +8,7 @@ import AddBlog from "../components/AddBlog";
 import PrivateRoute from "./PrivateRoute";
 import AllBlogs from "../components/AllBlogs";
 import BlogDetails from "../components/BlogDetails";
+import FeaturedBlogs from "../components/FeaturedBlogs";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/featured-blogs",
+        element: <FeaturedBlogs />,
       },
       {
         path: "/blog/:id",

@@ -104,8 +104,6 @@ const Navbar = () => {
               </div>
             </div>
           </div>
-
-          {/* Navigation Links */}
           <ul
             className={`fixed md:relative top-[70px] md:top-auto left-0 md:left-auto px-4 md:px-0 shadow-md md:shadow-none w-full md:w-auto py-5 md:py-0 bg-white flex flex-col md:flex-row items-start md:items-center space-x-6 space-y-5 md:space-y-0 transform duration-300 ${
               open
@@ -115,8 +113,6 @@ const Navbar = () => {
           >
             {links}
           </ul>
-
-          {/* Right Side Profile & Auth Buttons */}
           <div className="flex items-center space-x-3">
             <Tooltip title={user?.displayName}>
               {user && (
