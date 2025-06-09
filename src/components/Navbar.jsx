@@ -3,6 +3,7 @@ import { BiMenu } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import useAuth from "../hook/useAuth";
 import toast from "react-hot-toast";
+import { Tooltip } from "@mui/material";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -117,13 +118,15 @@ const Navbar = () => {
 
           {/* Right Side Profile & Auth Buttons */}
           <div className="flex items-center space-x-3">
-            {user && (
-              <img
-                className="w-10 hidden md:block h-10 rounded-md object-cover ring-1 ring-[#10B981]"
-                src={user?.photoURL}
-                alt="User"
-              />
-            )}
+            <Tooltip title={user?.displayName}>
+              {user && (
+                <img
+                  className="w-10 cursor-pointer hidden md:block h-10 rounded-md object-cover ring-1 ring-[#10B981]"
+                  src={user?.photoURL}
+                  alt="User"
+                />
+              )}
+            </Tooltip>
             {user && (
               <p className="font-bold hidden md:block ring-1 ring-[#10B981] text-[#10B981] bg-[#10b9811c] rounded-md p-2">
                 {user?.displayName}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, MenuItem } from "@mui/material";
 import axios from "axios";
 import toast from "react-hot-toast";
+import useAuth from "../hook/useAuth";
 const categories = [
   "Technology",
   "Travel",
@@ -19,7 +20,8 @@ const AddBlog = () => {
   const [category, setCategory] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [longDescription, setLongDescription] = useState("");
-
+  const { user } = useAuth();
+  const author = user?.displayName;
   const handleSubmit = (e) => {
     e.preventDefault();
     const blogData = {
@@ -28,6 +30,7 @@ const AddBlog = () => {
       category,
       shortDescription,
       longDescription,
+      author,
     };
     axios
       .post("http://localhost:2000/api/addblog", blogData)

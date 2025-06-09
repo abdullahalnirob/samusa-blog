@@ -1,8 +1,16 @@
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Tooltip } from "@mui/material";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import {
+  FaUser,
+  FaCalendarAlt,
+  FaEdit,
+  FaUserAlt,
+  FaPencilAlt,
+} from "react-icons/fa";
+import useAuth from "../hook/useAuth";
 
 const categories = [
   "All",
@@ -22,7 +30,7 @@ const AllBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-
+  const { user } = useAuth();
   useEffect(() => {
     axios
       .get("http://localhost:2000/api/allBlogs")
@@ -98,7 +106,7 @@ const AllBlogs = () => {
               className="bg-white ring-1 ring-gray-300 shadow rounded overflow-hidden transition duration-300"
             >
               <img
-                src={blog.imageUrl}
+                src={blog.imageUrl || "/placeholder.svg"}
                 alt={blog.title}
                 className="w-full h-48 object-cover"
               />
@@ -111,22 +119,32 @@ const AllBlogs = () => {
                     ? blog.shortDescription.slice(0, 100) + "..."
                     : blog.shortDescription}
                 </p>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="inline-block px-3 py-1 text-xs bg-green-100 text-green-600 rounded-full">
-                    {blog.category}
+                <div className="flex my-1 items-center justify-between text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <FaUserAlt />
+                    <p>{blog?.author}</p>
                   </span>
+                  {user?.displayName == blog?.author && (
+                    <span>
+                      <Tooltip title="Edit blog">
+                        <button className="flex items-center gap-1 bg-green-300 px-3 cursor-pointer py-1 rounded-md  hover:text-black duration-200">
+                          <FaPencilAlt />
+                          <p>Edit blog</p>
+                        </button>
+                      </Tooltip>
+                    </span>
+                  )}
                 </div>
-              </div>
-
-              <div className="flex justify-between items-center px-5 py-3 border-t border-gray-300">
-                <Link to={`/blog/${blog._id}`}>
-                  <button className="mb-3 mx-3 text-white cursor-pointer px-5 py-2 rounded bg-[#10B981] hover:bg-[#458d75] duration-200">
-                    View more
+                <div className="flex flex-col md:flex-row justify-between items-center gap-3 py-3 border-t border-gray-300">
+                  <Link to={`/blog/${blog._id}`} className="w-full">
+                    <button className="w-full text-white cursor-pointer px-5 py-2 rounded bg-[#10B981] hover:bg-[#458d75] duration-200">
+                      View more
+                    </button>
+                  </Link>
+                  <button className="w-full text-[#10B981] cursor-pointer px-5 py-2 rounded ring-[#10B981] ring-1 hover:ring-2 hover:ring-[#458d75] duration-200">
+                    Wishlist
                   </button>
-                </Link>
-                <button className="mb-3 mx-3 text-[#10B981] cursor-pointer px-5 py-2 rounded ring-[#10B981] ring-1 hover:ring-2 hover:ring-[#458d75] duration-200">
-                  Wishlist
-                </button>
+                </div>
               </div>
             </div>
           ))
