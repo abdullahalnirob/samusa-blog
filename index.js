@@ -71,6 +71,25 @@ app.post("/api/addcomment", async (req, res) => {
     }
 })
 
+app.get("/api/allComments", async (req, res) => {
+    try {
+        const comment = await comments.find().toArray()
+        res.status(200).send({ comment: comment })
+    } catch (error) {
+        res.status(400).send({ message: "Something error in server." });
+    }
+
+})
+app.delete("/api/deletecomment/:id", async (req, res) => {
+    try {
+        const comment = await comments.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.status(200).send({ comment: comment });
+    } catch (error) {
+        res.status(400).send({ message: "Something went wrong on the server." });
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
