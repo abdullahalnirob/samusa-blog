@@ -8,8 +8,33 @@ const jwt = require("jsonwebtoken");
 const port = 2000;
 
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    credentials: true
+}))
 app.use(cookieParser())
+
+// verify middleware
+
+const verify = (req, res, next) => {
+    const token = req.cookies.token;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(400).send({ message: "Invalid token" });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+        return res.status(401).send({ message: "Unauthorized: No token" });
+    }
+};
+
+
+
+
 
 app.get("/", (req, res) => {
     res.send("Server is running!");
@@ -38,9 +63,12 @@ run().catch(console.dir);
 app.post("/api/jwt", (req, res) => {
     try {
         const { email } = req.body;
-        console.log(email)
         const user = { email };
         const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" })
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false
+        })
         res.status(200).send({ token })
     } catch (error) {
         res.status(400).send({ message: "Something went wrong on the server." });
@@ -92,21 +120,34 @@ app.put("/api/editblog/:id", (req, res) => {
 app.post("/api/addToWishlist", async (req, res) => {
     try {
         const wishlistData = req.body;
+        const existingItem = await wishlist.findOne({
+            lister: req.body.lister,
+            title: req.body.title
+        });
+        if (existingItem) {
+            return res.status(400).send({ message: "This item is already in your wishlist." });
+        }
         const result = await wishlist.insertOne(wishlistData);
         res.status(200).send({ wishlist: result });
     } catch (error) {
         res.status(400).send({ message: "Something went wrong on the server." });
     }
 });
-app.get("/api/getWishlist", async (req, res) => {
+
+app.get("/api/wishlist", verify, async (req, res) => {
     try {
-        const wishlistData = await wishlist.find().toArray();
+        const email = req.query.email;
+        if (email !== req.decoded.email) {
+            res.status(401).send({ message: "Unauthorized access" });
+        }
+        const query = { lister: email };
+        const wishlistData = await wishlist.find(query).toArray();
         res.status(200).send({ wishlist: wishlistData });
     } catch (error) {
-        res.status(400).send({ message: "Something went wrong on the server." });
-
+        console.error("Error fetching wishlist:", error);
+        res.status(500).send({ error: "Internal server error" });
     }
-})
+});
 
 
 app.post("/api/addcomment", async (req, res) => {
