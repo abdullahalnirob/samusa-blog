@@ -62,6 +62,16 @@ app.get("/api/blog/:id", async (req, res) => {
 })
 
 
+app.put("/api/editblog/:id", (req, res) => {
+    try {
+        const blog = req.body;
+        const result = collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: blog });
+        res.status(200).send({ blog: result });
+    } catch (error) {
+        res.status(400).send({ message: "Something went wrong on the server." });
+    }
+})
+
 app.post("/api/addcomment", async (req, res) => {
     try {
         const comment = req.body;
@@ -91,6 +101,8 @@ app.delete("/api/deletecomment/:id", async (req, res) => {
 });
 
 
-app.listen(port,() => {
+
+
+app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
