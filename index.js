@@ -61,6 +61,7 @@ app.get("/api/blog/:id", async (req, res) => {
 
 })
 
+
 app.post("/api/addcomment", async (req, res) => {
     try {
         const comment = req.body;
@@ -90,6 +91,6 @@ app.delete("/api/deletecomment/:id", async (req, res) => {
 });
 
 
-app.listen(port, () => {
+app.listen(port,() => {
     console.log(`Server is running at http://localhost:${port}`);
 });
