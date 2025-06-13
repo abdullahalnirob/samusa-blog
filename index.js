@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const port = 2000;
 
-app.use(express.json());
+app.use(express.json())
 app.use(cors({
     origin: ["https://samusa-blog.web.app"],
     credentials: true,
