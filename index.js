@@ -149,6 +149,16 @@ app.get("/api/wishlist", verify, async (req, res) => {
     }
 });
 
+app.delete("/api/deleteFromWishlist/:id", async (req, res) => {
+    try {
+        const wishlistData = await wishlist.deleteOne({ _id: new ObjectId(req.params.id) });
+        res.status(200).send({ wishlist: wishlistData });
+    } catch (error) {
+        res.status(400).send({ message: "Something went wrong on the server." });
+    }
+})
+
+
 
 app.post("/api/addcomment", async (req, res) => {
     try {
