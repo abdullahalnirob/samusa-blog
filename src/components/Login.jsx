@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import useAuth from "../hook/useAuth";
 import toast from "react-hot-toast";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { SignIn,setUser } = useAuth();
+  const emailRef = useRef(null);
+  const { SignIn, setUser } = useAuth();
 
   const handleLogin = () => {
+    const email = emailRef.current.value;
     SignIn(email, password)
       .then(() => {
         toast.success("User Login Successfully!");
@@ -23,16 +24,33 @@ const Login = () => {
         toast.error("User Login Failed!");
       });
   };
+
   const provider = new GoogleAuthProvider();
   const SignInWithGoogle = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         setUser(result.user);
-        toast.success("User loign successfull!");
+        toast.success("User login successful!");
         navigate("/");
       })
       .catch((err) => {
         toast.error("Google Sign-in failed.");
+      });
+  };
+
+  const handleForgotPassword = () => {
+    const email = emailRef.current.value;
+    if (!email) {
+      toast.error("Please enter your email first.");
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        toast.success("Password reset email sent!");
+      })
+      .catch(() => {
+        toast.error("Failed to send reset email.");
       });
   };
 
@@ -44,8 +62,7 @@ const Login = () => {
         <div className="flex flex-col">
           <div className="my-2">
             <TextField
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              inputRef={emailRef}
               label="Email"
               variant="outlined"
               type="email"
@@ -70,9 +87,13 @@ const Login = () => {
           </div>
         </div>
 
-        <p className="text-green-500 text-sm text-right cursor-pointer hover:text-green-600 transition-colors duration-200">
+        <p
+          onClick={handleForgotPassword}
+          className="text-green-500 text-sm text-right cursor-pointer hover:text-green-600 transition-colors duration-200"
+        >
           Forget password?
         </p>
+
         <button
           type="button"
           onClick={SignInWithGoogle}
@@ -85,6 +106,7 @@ const Login = () => {
           />
           Login with Google
         </button>
+
         <button
           onClick={handleLogin}
           className="w-full cursor-pointer px-4 py-2 rounded-md bg-[#10B981] hover:bg-[#15a374] text-white transition-colors duration-200"

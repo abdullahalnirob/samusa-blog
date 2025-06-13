@@ -1,11 +1,11 @@
-"use client";
-
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { BiCategory } from "react-icons/bi";
-import { AiFillDelete, AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaUser, FaCalendarAlt, FaTrash } from "react-icons/fa";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaUser, FaCalendarAlt, FaTrash, FaPencilAlt } from "react-icons/fa";
 import { TextField, Button, Box, Typography, Tooltip } from "@mui/material";
 import toast from "react-hot-toast";
 import useAuth from "../hook/useAuth";
@@ -16,20 +16,21 @@ const BlogDetails = () => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(true);
+  const [isImageLoading, setIsImageLoading] = useState(true);
   const { user } = useAuth();
+
   useEffect(() => {
+    setIsImageLoading(true);
     axios
       .get(`http://localhost:2000/api/blog/${id}`)
       .then((data) => {
-        const blogData = data.data.blog;
-        setBlog(blogData);
+        setBlog(data.data.blog);
       })
       .catch((err) => {
         console.log("Error fetching blog:", err);
       });
   }, [id]);
 
-  // Fetch comments
   useEffect(() => {
     if (id) {
       fetchComments();
@@ -41,8 +42,7 @@ const BlogDetails = () => {
     axios
       .get("http://localhost:2000/api/allComments")
       .then((data) => {
-        const comments = data.data.comment;
-        const blogComments = comments.filter(
+        const blogComments = data.data.comment.filter(
           (comment) => comment.blogId === id
         );
         setComments(blogComments);
@@ -64,7 +64,7 @@ const BlogDetails = () => {
     };
     axios
       .post(`http://localhost:2000/api/addcomment`, commentData)
-      .then((data) => {
+      .then(() => {
         toast.success("Comment submitted successfully");
         setComment("");
         fetchComments();
@@ -75,10 +75,10 @@ const BlogDetails = () => {
       });
   };
 
-  const handleDeleteComment = (id) => {
+  const handleDeleteComment = (commentId) => {
     axios
-      .delete(`http://localhost:2000/api/deletecomment/${id}`)
-      .then((data) => {
+      .delete(`http://localhost:2000/api/deletecomment/${commentId}`)
+      .then(() => {
         toast.success("Comment deleted successfully");
         fetchComments();
       })
@@ -104,14 +104,36 @@ const BlogDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
       <article className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
-          <img
-            src={blog.imageUrl || "/placeholder.svg"}
-            alt={blog.title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-        </div>
+        <PhotoProvider>
+          <div className="relative h-[70vh] min-h-[400px] overflow-hidden rounded-xl">
+            {blog.imageUrl ? (
+              <>
+                <PhotoView src={blog.imageUrl}>
+                  <Tooltip title="Click to preview image">
+                    <img
+                      src={blog.imageUrl}
+                      alt={blog.title}
+                      className="w-full cursor-zoom-in h-full object-cover"
+                      onLoad={() => setIsImageLoading(false)}
+                    />
+                  </Tooltip>
+                </PhotoView>
+                {isImageLoading && (
+                  <div className="absolute inset-0 bg-white flex items-center justify-center">
+                    <AiOutlineLoading3Quarters className="animate-spin text-4xl text-emerald-500" />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-full flex items-center justify-center">
+                <span className="text-gray-500 text-xl">
+                  No image available
+                </span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+          </div>
+        </PhotoProvider>
 
         <div className="p-6 md:p-8 lg:p-12">
           <div className="flex items-center gap-2 mb-4">
@@ -120,33 +142,49 @@ const BlogDetails = () => {
               {blog.category}
             </span>
           </div>
-          <div className="flex items-center gap-6 mb-6 pb-4 border-b border-gray-200">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                <FaUser className="text-emerald-600 text-lg" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Written by</p>
-                <p className="font-semibold text-gray-800">
-                  {blog.author || "Anonymous"}
-                </p>
-              </div>
-            </div>
-            {blog.createdAt && (
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-6 mb-6 pb-4 border-b border-gray-200">
               <div className="flex items-center gap-2">
-                <FaCalendarAlt className="text-gray-500" />
+                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <FaUser className="text-emerald-600 text-lg" />
+                </div>
                 <div>
-                  <p className="text-sm text-gray-500">Published on</p>
-                  <p className="font-medium text-gray-700">
-                    {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                  <p className="text-sm text-gray-500">Written by</p>
+                  <p className="font-semibold text-gray-800">
+                    {blog.author || "Anonymous"}
                   </p>
                 </div>
               </div>
-            )}
+              {blog.createdAt && (
+                <div className="flex items-center gap-2">
+                  <FaCalendarAlt className="text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Published on</p>
+                    <p className="font-medium text-gray-700">
+                      {new Date(blog.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mb-4 md:mb-0">
+              {user?.displayName == blog?.author && (
+                <Link to={`/blog/edit/${blog._id}`}>
+                  <span>
+                    <Tooltip title="Edit blog">
+                      <button className="flex items-center gap-1 bg-green-300 px-3 cursor-pointer py-1 rounded-md hover:text-black duration-200">
+                        <FaPencilAlt />
+                        <p>Edit blog</p>
+                      </button>
+                    </Tooltip>
+                  </span>
+                </Link>
+              )}
+            </div>
           </div>
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -206,20 +244,19 @@ const BlogDetails = () => {
                     className="bg-gray-50 rounded-lg p-4 border border-gray-200"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-10 h-10 rounded-md bg-emerald-100  flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-md bg-emerald-100 flex items-center justify-center">
                         <img
-                          className="rounded-md"
-                          src={comment?.profilePic}
-                          alt=""
+                          className="rounded-md w-10 h-10 object-cover"
+                          src={comment?.profilePic || "/default-user.png"}
+                          alt={comment.author}
                         />
                       </div>
                       <div className="flex items-center space-x-1">
                         <span className="font-semibold text-gray-800">
                           {comment.author}
                         </span>
-                        {user?.displayName == comment.author && (
+                        {user?.displayName === comment.author && (
                           <Tooltip title="Delete">
-                            {" "}
                             <button
                               className="text-red-500 hover:text-red-600 cursor-pointer"
                               onClick={() => handleDeleteComment(comment._id)}
@@ -266,7 +303,6 @@ const BlogDetails = () => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Share your thoughts about this blog post..."
-                  className="mb-4"
                 />
               </div>
               <Button
@@ -275,7 +311,6 @@ const BlogDetails = () => {
                 color="success"
                 size="large"
                 disabled={!comment.trim()}
-                className="px-8 py-2"
               >
                 Post Comment
               </Button>

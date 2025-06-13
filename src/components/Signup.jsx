@@ -16,6 +16,26 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    const hasCapital = /[A-Z]/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    if (!hasCapital) {
+      toast.error("Password must contain at least one capital letter.");
+      return;
+    }
+    if (!hasSpecial) {
+      toast.error("Password must contain at least one special character.");
+      return;
+    }
+    if (!hasNumber) {
+      toast.error("Password must contain at least one number.");
+      return;
+    }
     createUser(email, password)
       .then((result) => {
         const user = result.user;
@@ -35,6 +55,7 @@ const Signup = () => {
         toast.error("Account creation failed!");
       });
   };
+
 
   const provider = new GoogleAuthProvider();
   const SignInWithGoogle = () => {

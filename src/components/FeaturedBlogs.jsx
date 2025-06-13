@@ -107,7 +107,7 @@ const FeaturedBlogs = () => {
               </div>
               <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 overflow-hidden">
                 <img
-                  src={blog.imageUrl || "/placeholder.svg"}
+                  src={blog.imageUrl}
                   alt={blog.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -146,7 +146,7 @@ const FeaturedBlogs = () => {
                   </div>
                 </div>
                 <Link to={`/blog/${blog._id}`}>
-                  <button className="w-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl hover:from-[#059669] hover:to-[#047857] transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base">
+                  <button className="w-full cursor-pointer bg-gradient-to-r from-[#10B981] to-[#059669] text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl hover:from-[#059669] hover:to-[#047857] transition-all duration-300 shadow-md hover:shadow-lg text-sm sm:text-base">
                     Read Full Article
                   </button>
                 </Link>
@@ -211,7 +211,7 @@ const FeaturedBlogs = () => {
                       </div>
 
                       <Link to={`/blog/${blog._id}`}>
-                        <button className="bg-[#10B981] hover:bg-[#059669] text-white font-medium py-2 px-4 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
+                        <button className="bg-[#10B981] cursor-pointer hover:bg-[#059669] text-white font-medium py-2 px-4 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
                           Read More
                         </button>
                       </Link>

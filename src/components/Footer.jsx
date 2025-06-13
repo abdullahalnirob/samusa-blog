@@ -6,7 +6,6 @@ const Footer = () => {
   return (
     <div className="bg-black text-white px-6 py-10 mt-10">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
-        {/* Brand Section */}
         <div className="md:w-1/2">
           <div className="flex items-center mb-4">
             <img
@@ -26,8 +25,6 @@ const Footer = () => {
             one thought, one idea at a time.
           </p>
         </div>
-
-        {/* Links Section */}
         <div className="md:w-1/4">
           <p className="text-xl font-semibold mb-4">Links</p>
           <ul className="space-y-2 text-gray-300">
@@ -39,8 +36,6 @@ const Footer = () => {
           </ul>
         </div>
       </div>
-
-      {/* Bottom Section */}
       <div className="border-t border-gray-700 mt-10 pt-4 text-center text-gray-400 text-sm">
         © {currentYear} Samusa Blog. All rights reserved.
       </div>
