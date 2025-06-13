@@ -9,7 +9,7 @@ const port = 2000;
 
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://samusa-blog.web.app/"],
     credentials: true
 }))
 app.use(cookieParser())
@@ -17,7 +17,7 @@ app.use(cookieParser())
 // verify middleware
 
 const verifyWishlist = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req?.cookies?.token;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
