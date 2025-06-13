@@ -33,7 +33,7 @@ const verifyWishlist = (req, res, next) => {
 };
 
 const verifyAddBlog = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req?.cookies?.token;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
@@ -79,8 +79,8 @@ app.post("/api/jwt", (req, res) => {
         const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" })
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true, 
-            sameSite: "None", 
+            secure: true,
+            sameSite: "None",
         });
 
         res.status(200).send({ token })
