@@ -10,7 +10,7 @@ const port = 2000;
 app.use(express.json());
 app.use(cors({
     origin: ["https://samusa-blog.web.app"],
-    credentials: true
+    credentials: true,
 }))
 app.use(cookieParser())
 
@@ -79,8 +79,10 @@ app.post("/api/jwt", (req, res) => {
         const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "1h" })
         res.cookie("token", token, {
             httpOnly: true,
-            secure: false
-        })
+            secure: true, 
+            sameSite: "None", 
+        });
+
         res.status(200).send({ token })
     } catch (error) {
         res.status(400).send({ message: "Something went wrong on the server." });
