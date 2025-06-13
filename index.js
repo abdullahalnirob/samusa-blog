@@ -9,7 +9,7 @@ const port = 2000;
 
 app.use(express.json())
 app.use(cors({
-    origin: ["https://samusa-blog.web.app"],
+    origin: ["https://samusa-blog.web.app","http://localhost:5173"],
     credentials: true,
 }))
 app.use(cookieParser())
