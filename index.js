@@ -16,7 +16,7 @@ app.use(cookieParser())
 
 // verify middleware
 
-const verify = (req, res, next) => {
+const verifyWishlist = (req, res, next) => {
     const token = req.cookies.token;
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -32,9 +32,21 @@ const verify = (req, res, next) => {
     }
 };
 
-
-
-
+const verifyAddBlog = (req, res, next) => {
+    const token = req.cookies.token;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(400).send({ message: "Invalid token" });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+        return res.status(401).send({ message: "Unauthorized: No token" });
+    }
+};
 
 app.get("/", (req, res) => {
     res.send("Server is running!");
@@ -77,7 +89,7 @@ app.post("/api/jwt", (req, res) => {
 
 
 
-app.post("/api/addblog", async (req, res) => {
+app.post("/api/addblog", verifyAddBlog, async (req, res) => {
     const blogData = req.body;
     try {
         const result = await collection.insertOne(blogData);
@@ -134,7 +146,7 @@ app.post("/api/addToWishlist", async (req, res) => {
     }
 });
 
-app.get("/api/wishlist", verify, async (req, res) => {
+app.get("/api/wishlist", verifyWishlist, async (req, res) => {
     try {
         const email = req.query.email;
         if (email !== req.decoded.email) {
