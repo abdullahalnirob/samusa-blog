@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -27,12 +28,12 @@ const Footer = () => {
         </div>
         <div className="md:w-1/4">
           <p className="text-xl font-semibold mb-4">Links</p>
-          <ul className="space-y-2 text-gray-300">
-            <li className="hover:text-white cursor-pointer">Home</li>
-            <li className="hover:text-white cursor-pointer">Add Blog</li>
-            <li className="hover:text-white cursor-pointer">All Blogs</li>
-            <li className="hover:text-white cursor-pointer">Featured Blogs</li>
-            <li className="hover:text-white cursor-pointer">Wishlist</li>
+          <ul className="space-y-2 text-gray-300 flex flex-col">
+            <Link to="/" className="hover:text-white cursor-pointer">Home</Link>
+            <Link to="/add-blog" className="hover:text-white cursor-pointer">Add Blog</Link>
+            <Link to="/all-blogs" className="hover:text-white cursor-pointer">All Blogs</Link>
+            <Link to="/featured-blogs" className="hover:text-white cursor-pointer">Featured Blogs</Link>
+            <Link to="/wishlist" className="hover:text-white cursor-pointer">Wishlist</Link>
           </ul>
         </div>
       </div>
