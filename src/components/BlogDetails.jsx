@@ -1,165 +1,150 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { BiCategory } from "react-icons/bi";
-import { PhotoProvider, PhotoView } from "react-photo-view";
-import "react-photo-view/dist/react-photo-view.css";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { FaUser, FaCalendarAlt, FaTrash, FaPencilAlt } from "react-icons/fa";
-import { TextField, Button, Box, Typography, Tooltip } from "@mui/material";
-import toast from "react-hot-toast";
-import useAuth from "../hook/useAuth";
+import axios from "axios"
+import { useState, useEffect } from "react"
+import { Link, useParams } from "react-router-dom"
+import { PhotoProvider, PhotoView } from "react-photo-view"
+import "react-photo-view/dist/react-photo-view.css"
+import { FaUser, FaCalendarAlt, FaTrash, FaPencilAlt, FaRegComment, FaHeart } from "react-icons/fa"
+import { TextField, Button, Box, Typography, Tooltip, Fade, CircularProgress } from "@mui/material"
+import toast from "react-hot-toast"
+import useAuth from "../hook/useAuth"
 
 const BlogDetails = () => {
-  const [blog, setBlog] = useState(null);
-  const { id } = useParams();
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
-  const [loadingComments, setLoadingComments] = useState(true);
-  const [isImageLoading, setIsImageLoading] = useState(true);
-  const { user } = useAuth();
+  const [blog, setBlog] = useState(null)
+  const { id } = useParams()
+  const [comment, setComment] = useState("")
+  const [comments, setComments] = useState([])
+  const [loadingComments, setLoadingComments] = useState(true)
+  const [isImageLoading, setIsImageLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { user } = useAuth()
 
   useEffect(() => {
-    setIsImageLoading(true);
+    setIsImageLoading(true)
     axios
-      .get(`http://localhost:2000/api/blog/${id}`)
-      .then((data) => {
-        setBlog(data.data.blog);
-      })
+      .get(`https://samusa-blog-server.vercel.app/api/blog/${id}`)
+      .then((res) => setBlog(res.data.blog))
       .catch((err) => {
-        console.log("Error fetching blog:", err);
-      });
-  }, [id]);
+        toast.error("Failed to load blog")
+        console.error(err)
+      })
+  }, [id])
 
   useEffect(() => {
-    if (id) {
-      fetchComments();
+    let intervalId
+
+    const fetchComments = () => {
+      axios
+        .get("https://samusa-blog-server.vercel.app/api/allComments")
+        .then((res) => {
+          const blogComments = res.data.comment.filter((c) => c.blogId?.toString() === id)
+          setComments(blogComments)
+          setLoadingComments(false)
+        })
+        .catch((err) => {
+          console.error(err)
+          setLoadingComments(false)
+        })
     }
-  }, [id]);
 
-  const fetchComments = () => {
-    setLoadingComments(true);
-    axios
-      .get("http://localhost:2000/api/allComments")
-      .then((data) => {
-        const blogComments = data.data.comment.filter(
-          (comment) => comment.blogId === id
-        );
-        setComments(blogComments);
-        setLoadingComments(false);
-      })
-      .catch((err) => {
-        console.log("Error fetching comments:", err);
-        setLoadingComments(false);
-      });
-  };
+    if (id) {
+      fetchComments()
+      intervalId = setInterval(fetchComments, 5000)
+    }
+    return () => clearInterval(intervalId)
+  }, [id])
 
   const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    const commentData = {
-      comment,
-      blogId: id,
-      author: user?.displayName,
-      profilePic: user?.photoURL,
-    };
-    axios
-      .post(`http://localhost:2000/api/addcomment`, commentData)
-      .then(() => {
-        toast.success("Comment submitted successfully");
-        setComment("");
-        fetchComments();
-      })
-      .catch((err) => {
-        toast.error("Error submitting comment..");
-        console.log(err);
-      });
-  };
+    e.preventDefault()
+    setIsSubmitting(true)
 
-  const handleDeleteComment = (commentId) => {
     axios
-      .delete(`http://localhost:2000/api/deletecomment/${commentId}`)
-      .then(() => {
-        toast.success("Comment deleted successfully");
-        fetchComments();
+      .post(`https://samusa-blog-server.vercel.app/api/addcomment`, {
+        comment,
+        blogId: id,
+        author: user?.displayName,
+        profilePic: user?.photoURL,
       })
-      .catch((err) => {
-        toast.error("Error deleting comment..");
-        console.log(err);
-      });
-  };
+      .then(() => {
+        toast.success("Comment submitted")
+        setComment("")
+      })
+      .catch(() => toast.error("Error submitting comment"))
+      .finally(() => setIsSubmitting(false))
+  }
+
+  const handleDeleteComment = (cmtId) => {
+    axios
+      .delete(`https://samusa-blog-server.vercel.app/api/deletecomment/${cmtId}`)
+      .then(() => toast.success("Comment deleted"))
+      .catch(() => toast.error("Error deleting comment"))
+  }
 
   if (!blog) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <AiOutlineLoading3Quarters className="animate-spin text-4xl text-emerald-500 mx-auto mb-4" />
-          <p className="text-xl text-gray-600 font-medium">
-            Loading blog details...
-          </p>
-        </div>
+      <div className="flex flex-col justify-center items-center h-[70vh]">
+        <CircularProgress size={50} color="success" />
+        <p className="mt-4 text-lg my-1 sm:text-xl text-gray-600 font-medium">Blog is loading...</p>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
-      <article className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br py-8 px-4">
+      <article className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden transition-all border border-emerald-100">
         <PhotoProvider>
-          <div className="relative h-[70vh] min-h-[400px] overflow-hidden rounded-xl">
+          <div className="relative h-[70vh] min-h-[400px] overflow-hidden">
             {blog.imageUrl ? (
               <>
                 <PhotoView src={blog.imageUrl}>
-                  <Tooltip title="Click to preview image">
+                  <Tooltip title="Click to enlarge image" arrow placement="top">
                     <img
-                      src={blog.imageUrl}
+                      src={blog.imageUrl || "/placeholder.svg"}
                       alt={blog.title}
-                      className="w-full cursor-zoom-in h-full object-cover"
+                      className="w-full h-full object-cover cursor-zoom-in transition-transform hover:scale-105 duration-700"
                       onLoad={() => setIsImageLoading(false)}
                     />
                   </Tooltip>
                 </PhotoView>
-                {isImageLoading && (
-                  <div className="absolute inset-0 bg-white flex items-center justify-center">
-                    <AiOutlineLoading3Quarters className="animate-spin text-4xl text-emerald-500" />
+                <Fade in={isImageLoading}>
+                  <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
+                    <CircularProgress color="success" />
                   </div>
-                )}
+                </Fade>
               </>
             ) : (
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-full flex items-center justify-center">
-                <span className="text-gray-500 text-xl">
-                  No image available
-                </span>
+              <div className="flex items-center justify-center w-full h-full bg-gray-100 border-2 border-dashed border-emerald-200 rounded-xl">
+                <span className="text-gray-500 text-xl">No image available</span>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+
+            <div className="absolute top-4 right-4 z-10">
+              <span className="bg-emerald-500 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg">
+                {blog.category}
+              </span>
+            </div>
           </div>
         </PhotoProvider>
 
-        <div className="p-6 md:p-8 lg:p-12">
-          <div className="flex items-center gap-2 mb-4">
-            <BiCategory className="text-emerald-500 text-lg" />
-            <span className="inline-block bg-emerald-100 text-emerald-800 text-sm font-semibold px-3 py-1 rounded-full">
-              {blog.category}
-            </span>
-          </div>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-6 mb-6 pb-4 border-b border-gray-200">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+        <div className="p-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 pb-6 border-b border-emerald-100">
+            <div className="flex flex-wrap items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full border-2 border-emerald-200">
                   <FaUser className="text-emerald-600 text-lg" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Written by</p>
-                  <p className="font-semibold text-gray-800">
-                    {blog.author || "Anonymous"}
-                  </p>
+                  <p className="text-sm text-emerald-600 font-medium">Written by</p>
+                  <p className="font-semibold text-gray-800">{blog.author || "Anonymous"}</p>
                 </div>
               </div>
               {blog.createdAt && (
-                <div className="flex items-center gap-2">
-                  <FaCalendarAlt className="text-gray-500" />
+                <div className="flex items-center gap-3 mt-4 md:mt-0">
+                  <div className="flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full border-2 border-emerald-200">
+                    <FaCalendarAlt className="text-emerald-600 text-lg" />
+                  </div>
                   <div>
-                    <p className="text-sm text-gray-500">Published on</p>
+                    <p className="text-sm text-emerald-600 font-medium">Published on</p>
                     <p className="font-medium text-gray-700">
                       {new Date(blog.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -171,155 +156,149 @@ const BlogDetails = () => {
                 </div>
               )}
             </div>
-            <div className="mb-4 md:mb-0">
-              {user?.displayName == blog?.author && (
-                <Link to={`/blog/edit/${blog._id}`}>
-                  <span>
-                    <Tooltip title="Edit blog">
-                      <button className="flex items-center gap-1 bg-green-300 px-3 cursor-pointer py-1 rounded-md hover:text-black duration-200">
-                        <FaPencilAlt />
-                        <p>Edit blog</p>
-                      </button>
-                    </Tooltip>
-                  </span>
-                </Link>
-              )}
-            </div>
+            {user?.displayName === blog.author && (
+              <Link to={`/blog/edit/${blog._id}`}>
+                <Tooltip title="Edit blog" arrow>
+                  <button className="mt-4 cursor-pointer md:mt-0 px-4 py-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md flex items-center gap-2">
+                    <FaPencilAlt />
+                    <span>Edit blog</span>
+                  </button>
+                </Tooltip>
+              </Link>
+            )}
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            {blog.title}
-          </h1>
-          <div className="bg-gray-50 border-l-4 border-emerald-500 p-6 mb-8 rounded-r-lg">
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium italic">
-              {blog.shortDescription}
-            </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">{blog.title}</h1>
+          <div className="border-l-4 border-emerald-500 bg-emerald-50 p-6 mb-8 rounded-r-lg shadow-sm">
+            <p className="text-xl italic text-gray-700">{blog.shortDescription}</p>
           </div>
-          <div className="prose prose-lg max-w-none">
-            <div className="text-gray-800 leading-8 whitespace-pre-line text-base md:text-lg">
-              {blog.longDescription}
-            </div>
-          </div>
+
+          <div className="prose prose-lg max-w-none text-gray-800 whitespace-pre-line">{blog.longDescription}</div>
         </div>
 
-        <div className="bg-gray-50 px-6 md:px-8 lg:px-12 py-6 border-t border-gray-200">
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <div className="flex items-center gap-4">
-              <div className="text-gray-400">Article ID: {id}</div>
-              {blog.updatedAt && blog.updatedAt !== blog.createdAt && (
-                <div className="text-gray-400">
-                  Last updated: {new Date(blog.updatedAt).toLocaleDateString()}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <FaUser className="text-gray-400" />
-              <span className="text-gray-500">
-                By {blog.author || "Anonymous"}
-              </span>
-            </div>
+        <div className="bg-emerald-50 px-8 py-6 border-t border-emerald-100 flex flex-col sm:flex-row justify-between text-sm text-gray-600">
+          <div>
+            <span className="bg-white px-3 py-1 rounded-md border border-emerald-200 inline-block">
+              Article ID: {id}
+            </span>
+          </div>
+          <div className="mt-2 sm:mt-0 flex items-center gap-2">
+            <FaHeart className="text-emerald-500" />
+            <span>By {blog.author || "Anonymous"}</span>
           </div>
         </div>
-
-        <div className="bg-white px-6 md:px-8 lg:px-12 py-8 border-t border-gray-200">
-          <div className="mb-8">
-            <Typography
-              variant="h5"
-              component="h2"
-              className="mb-6 font-bold text-gray-900"
-            >
+        <div className="p-6 bg-white border-t border-emerald-100">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+              <FaRegComment className="text-emerald-600 text-sm" />
+            </div>
+            <Typography variant="h6" className="font-bold text-gray-900">
               Comments ({comments.length})
             </Typography>
+          </div>
 
-            {loadingComments ? (
-              <div className="flex items-center justify-center py-8">
-                <AiOutlineLoading3Quarters className="animate-spin text-2xl text-emerald-500 mr-2" />
-                <span className="text-gray-600">Loading comments...</span>
-              </div>
-            ) : comments.length > 0 ? (
-              <div className="space-y-4 mb-8">
-                {comments.map((comment) => (
-                  <div
-                    key={comment._id}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-200"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-10 h-10 rounded-md bg-emerald-100 flex items-center justify-center">
-                        <img
-                          className="rounded-md w-10 h-10 object-cover"
-                          src={comment?.profilePic || "/default-user.png"}
-                          alt={comment.author}
-                        />
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <span className="font-semibold text-gray-800">
-                          {comment.author}
-                        </span>
-                        {user?.displayName === comment.author && (
-                          <Tooltip title="Delete">
+          {loadingComments ? (
+            <div className="flex items-center justify-center py-8">
+              <CircularProgress color="success" size={24} className="mr-2" />
+              <span className="text-gray-600 text-sm">Loading comments...</span>
+            </div>
+          ) : comments.length > 0 ? (
+            <div className="space-y-3 mb-6">
+              {comments.map(({ _id, author: cA, comment: msg, profilePic }) => (
+                <div
+                  key={_id}
+                  className="border border-gray-200 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-full overflow-hidden flex-shrink-0 border border-emerald-200">
+                      <img
+                        src={profilePic || "/default-user.png"}
+                        alt={cA}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "/default-user.png"
+                        }}
+                      />
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-gray-800 text-sm">{cA}</span>
+                        {user?.displayName === cA && (
+                          <Tooltip title="Delete comment" arrow>
                             <button
-                              className="text-red-500 hover:text-red-600 cursor-pointer"
-                              onClick={() => handleDeleteComment(comment._id)}
+                              onClick={() => handleDeleteComment(_id)}
+                              className="text-red-400 cursor-pointer hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50"
                             >
-                              <FaTrash />
+                              <FaTrash className="text-xs" />
                             </button>
                           </Tooltip>
                         )}
                       </div>
+                      <p className="text-gray-700 text-sm leading-relaxed break-words">{msg}</p>
                     </div>
-                    <p className="text-gray-700 leading-relaxed ml-10">
-                      {comment.comment}
-                    </p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <p>No comments yet. Be the first to comment!</p>
-              </div>
-            )}
-          </div>
-          <div className="border-t border-gray-200 pt-8">
-            <Typography
-              variant="h6"
-              component="h3"
-              className="mb-4 font-semibold text-gray-900"
-            >
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-gray-500 border border-dashed border-emerald-200 rounded-lg bg-emerald-50 mb-6">
+              <FaRegComment className="text-2xl mx-auto mb-2 text-emerald-300" />
+              <p className="text-sm">No comments yet. Be the first to comment!</p>
+            </div>
+          )}
+
+          <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+            <Typography variant="subtitle1" className="mb-3 font-semibold text-gray-900 flex items-center gap-2">
+              <span className="w-1 h-4 bg-emerald-500 rounded-full inline-block"></span>
               Leave a Comment
             </Typography>
-            <Box
-              component="form"
-              onSubmit={handleCommentSubmit}
-              className="space-y-4"
-            >
-              <div className="my-3">
+            <Box component="form" onSubmit={handleCommentSubmit} className="space-y-3">
+              <div className="my-5">
                 <TextField
                   fullWidth
                   multiline
-                  rows={4}
+                  rows={3}
                   variant="outlined"
                   color="success"
-                  label="Write your comment here..."
+                  label="Write your comment..."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Share your thoughts about this blog post..."
+                  required
+                  disabled={isSubmitting || !user}
+                  size="small"
+                  sx={{
+                    backgroundColor: "white",
+                    "& .MuiOutlinedInput-root": {
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#10b981",
+                      },
+                    },
+                  }}
                 />
               </div>
+              {!user && (
+                <div className="text-amber-600 text-xs bg-amber-50 p-2 rounded border border-amber-200">
+                  You need to be logged in to comment.
+                </div>
+              )}
               <Button
                 type="submit"
                 variant="contained"
                 color="success"
-                size="large"
-                disabled={!comment.trim()}
+                size="medium"
+                disabled={!comment.trim() || isSubmitting || !user}
+                startIcon={isSubmitting && <CircularProgress size={16} color="inherit" />}
+                sx={{ textTransform: "none" }}
               >
-                Post Comment
+                {isSubmitting ? "Posting..." : "Post Comment"}
               </Button>
             </Box>
           </div>
         </div>
       </article>
     </div>
-  );
-};
+  )
+}
 
-export default BlogDetails;
+export default BlogDetails

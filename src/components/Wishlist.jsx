@@ -13,7 +13,7 @@ const Wishlist = () => {
     const fetchWishlist = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:2000/api/wishlist?email=${user.email}`,
+          `https://samusa-blog-server.vercel.app/api/wishlist?email=${user.email}`,
           {
             withCredentials: true,
           }
@@ -31,7 +31,7 @@ const Wishlist = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:2000/api/deleteFromWishlist/${id}`)
+      .delete(`https://samusa-blog-server.vercel.app/api/deleteFromWishlist/${id}`)
       .then((res) => {
         setWishlistItems((prevItems) =>
           prevItems.filter((item) => item._id !== id)

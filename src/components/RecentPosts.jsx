@@ -15,7 +15,7 @@ const RecentPosts = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:2000/api/allBlogs")
+      .get("https://samusa-blog-server.vercel.app/api/allBlogs")
       .then((res) => {
         const latestBlogs = res.data.blogs.slice(-6).reverse();
         setBlogs(latestBlogs);
@@ -47,7 +47,7 @@ const RecentPosts = () => {
     };
 
     axios
-      .post("http://localhost:2000/api/addToWishlist", blogData)
+      .post("https://samusa-blog-server.vercel.app/api/addToWishlist", blogData)
       .then((res) => {
         if (res.status === 200 && res.data.wishlist?.acknowledged === true) {
           toast.success("Added to wishlist successfully!");
@@ -64,10 +64,10 @@ const RecentPosts = () => {
 
   const BlogCardSkeleton = () => (
     <div className="bg-white ring-1 ring-gray-300 shadow rounded overflow-hidden transition duration-300">
-      <Skeleton height={192} width="100%" /> 
+      <Skeleton height={192} width="100%" />
       <div className="p-5">
         <Skeleton height={28} width="80%" className="mb-2" />
-        <Skeleton count={2} className="mb-4" /> 
+        <Skeleton count={2} className="mb-4" />
         <div className="flex my-1 items-center justify-between">
           <Skeleton width={100} height={20} />
         </div>

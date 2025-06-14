@@ -33,7 +33,7 @@ const AddBlog = () => {
       author,
     };
     axios
-      .post("http://localhost:2000/api/addblog", blogData)
+      .post("https://samusa-blog-server.vercel.app/api/addblog", blogData)
       .then(() => {
         toast.success("Successfully blog added!");
         setTitle("");
@@ -65,6 +65,14 @@ const AddBlog = () => {
                 size="small"
                 label="Blog Title"
                 color="success"
+                sx={{
+                  backgroundColor: "white",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#10b981",
+                    },
+                  },
+                }}
                 variant="outlined"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -77,6 +85,14 @@ const AddBlog = () => {
                 size="small"
                 label="Image URL"
                 color="success"
+                sx={{
+                  backgroundColor: "white",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#10b981",
+                    },
+                  },
+                }}
                 variant="outlined"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
@@ -91,6 +107,14 @@ const AddBlog = () => {
                 label="Category"
                 variant="outlined"
                 color="success"
+                sx={{
+                  backgroundColor: "white",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#10b981",
+                    },
+                  },
+                }}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
@@ -111,6 +135,14 @@ const AddBlog = () => {
                 multiline
                 rows={2}
                 color="success"
+                sx={{
+                  backgroundColor: "white",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#10b981",
+                    },
+                  },
+                }}
                 value={shortDescription}
                 onChange={(e) => setShortDescription(e.target.value)}
                 helperText="Max 200 characters"
@@ -126,6 +158,14 @@ const AddBlog = () => {
                 multiline
                 rows={4}
                 color="success"
+                sx={{
+                  backgroundColor: "white",
+                  "& .MuiOutlinedInput-root": {
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#10b981",
+                    },
+                  },
+                }}
                 value={longDescription}
                 onChange={(e) => setLongDescription(e.target.value)}
                 helperText="Detailed blog content"

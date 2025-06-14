@@ -32,7 +32,7 @@ const AllBlogs = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:2000/api/allBlogs")
+      .get("https://samusa-blog-server.vercel.app/api/allBlogs")
       .then((data) => {
         setBlogs(data.data.blogs)
         setFilteredBlogs(data.data.blogs)
@@ -77,7 +77,7 @@ const AllBlogs = () => {
     }
 
     axios
-      .post("http://localhost:2000/api/addToWishlist", blogData)
+      .post("https://samusa-blog-server.vercel.app/api/addToWishlist", blogData)
       .then((res) => {
         if (res.status === 200 && res.data.wishlist?.acknowledged === true) {
           toast.success("Added to wishlist!")
@@ -215,8 +215,8 @@ const AllBlogs = () => {
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-full text-sm border ${selectedCategory === cat
-                  ? "bg-[#10B981] text-white border-[#10B981]"
-                  : "text-gray-600 border-gray-300 hover:bg-gray-100"
+                ? "bg-[#10B981] text-white border-[#10B981]"
+                : "text-gray-600 border-gray-300 hover:bg-gray-100"
                 } transition duration-200`}
             >
               {cat}

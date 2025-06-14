@@ -12,7 +12,7 @@ const FeaturedBlogs = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:2000/api/allBlogs")
+      .get("https://samusa-blog-server.vercel.app/api/allBlogs")
       .then((res) => {
         const blogs = res.data.blogs;
         const blogsWithWordCount = blogs.map((blog) => ({
@@ -87,13 +87,11 @@ const FeaturedBlogs = () => {
           {topBlogs.slice(0, 3).map((blog, index) => (
             <div
               key={blog._id}
-              className={`relative bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group ${
-                index === 0 ? "md:col-span-3 lg:col-span-1" : ""
-              } ${
-                index === 0
+              className={`relative bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group ${index === 0 ? "md:col-span-3 lg:col-span-1" : ""
+                } ${index === 0
                   ? "transform hover:scale-[1.02]"
                   : "transform hover:scale-[1.03]"
-              }`}
+                }`}
             >
               {" "}
               <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10">

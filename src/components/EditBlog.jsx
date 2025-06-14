@@ -28,10 +28,10 @@ const EditBlog = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     axios
-      .get(`http://localhost:2000/api/blog/${id}`)
+      .get(`https://samusa-blog-server.vercel.app/api/blog/${id}`)
       .then((res) => {
         const blog = res.data.blog;
         setTitle(blog.title || "");
@@ -58,7 +58,7 @@ const EditBlog = () => {
     };
 
     axios
-      .put(`http://localhost:2000/api/editblog/${id}`, updatedBlog)
+      .put(`https://samusa-blog-server.vercel.app/api/editblog/${id}`, updatedBlog)
       .then(() => {
         toast.success("Blog updated successfully!");
         navigate("/");

@@ -89,6 +89,14 @@ const Signup = () => {
               fullWidth
               size="small"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
             />
           </div>
           <div className="my-4">
@@ -102,6 +110,14 @@ const Signup = () => {
               fullWidth
               size="small"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
             />
           </div>
           <div className="my-4">
@@ -115,6 +131,14 @@ const Signup = () => {
               fullWidth
               size="small"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
             />
           </div>
           <div className="my-4">
@@ -128,6 +152,14 @@ const Signup = () => {
               fullWidth
               size="small"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
             />
           </div>
         </div>

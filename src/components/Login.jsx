@@ -69,6 +69,14 @@ const Login = () => {
               fullWidth
               placeholder="Enter your email"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
               size="small"
             />
           </div>
@@ -82,6 +90,14 @@ const Login = () => {
               fullWidth
               placeholder="Enter your password"
               color="success"
+              sx={{
+                backgroundColor: "white",
+                "& .MuiOutlinedInput-root": {
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#10b981",
+                  },
+                },
+              }}
               size="small"
             />
           </div>

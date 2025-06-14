@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
       if (currentUser?.email) {
         const userData = { email: currentUser.email };
         axios
-          .post("http://localhost:2000/api/jwt", userData, {
+          .post("https://samusa-blog-server.vercel.app/api/jwt", userData, {
             withCredentials: true,
           })
           .then((res) => {
