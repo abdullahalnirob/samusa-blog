@@ -16,7 +16,7 @@ const Footer = () => {
             />
             <p className="text-3xl md:text-4xl font-bold">Samusa Blog</p>
           </div>
-          <p className="text-gray-300 text-sm leading-relaxed">
+          <p className="text-gray-300 text-sm leading-relaxed mb-4 md:pr-20">
             Welcome to Samusa Blog — your daily dose of inspiration, innovation,
             and insight. Whether you're here to explore the latest trends in
             tech, dive into personal growth stories, or discover hidden
