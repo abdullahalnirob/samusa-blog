@@ -61,6 +61,7 @@ As a front-end project, it emphasizes:
 | Environment Vars | dotenv                                   |
 | Middleware       | CORS, Body-Parser, Cookie-Parser         |
 | Development Tool | Nodemon                                  |
+| Hosting (Opt.)   | Vercel                                   |
 
 ---
 
