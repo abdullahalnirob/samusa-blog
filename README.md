@@ -21,6 +21,10 @@ As a front-end project, it emphasizes:
 ## 🚀 Key Features
 
 - 📰 View blog posts with featured images, author details, and timestamps
+- 🧑‍💻 Create an account to access personalized features
+- ✍️ Create and publish your own blog posts
+- 📌 Add blog posts to a **wishlist** for later reading
+- 📝 Update or edit previously published blog posts
 - 🔍 Dynamic routing for individual blog pages
 - ⚡ Firebase-based backend integration (authentication, database, etc.)
 - 🧭 Navigation via `react-router-dom` v7
@@ -29,7 +33,6 @@ As a front-end project, it emphasizes:
 - 📱 Fully responsive UI for mobile, tablet, and desktop
 - 🔐 Secure and modern Firebase setup
 
----
 
 ## 🛠️ Tech Stack
 
