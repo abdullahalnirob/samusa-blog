@@ -33,9 +33,12 @@ As a front-end project, it emphasizes:
 
 ## 🛠️ Tech Stack
 
+### 🧩 Frontend
+
 | Category       | Tools & Libraries                             |
 |----------------|-----------------------------------------------|
-| Frontend       | React 19, Vite 6                              |
+| Framework      | React 19                                      |
+| Build Tool     | Vite 6                                        |
 | Styling        | Tailwind CSS 4, MUI, Emotion                  |
 | Routing        | React Router DOM v7.6                         |
 | Animation      | Framer Motion                                 |
@@ -43,7 +46,21 @@ As a front-end project, it emphasizes:
 | Image Preview  | React Photo View                              |
 | Skeleton Load  | React Loading Skeleton                        |
 | Firebase       | Firebase 11 (Auth, Firestore, Hosting)        |
-| HTTP Requests  | Axios                                         |
+| HTTP Client    | Axios                                         |
+
+---
+
+### 🔧 Backend
+
+| Category         | Tools & Libraries                        |
+|------------------|------------------------------------------|
+| Runtime          | Node.js                                  |
+| Framework        | Express.js 5                             |
+| Database         | MongoDB 6,                               |
+| Authentication   | JSON Web Tokens (JWT)                    |
+| Environment Vars | dotenv                                   |
+| Middleware       | CORS, Body-Parser, Cookie-Parser         |
+| Development Tool | Nodemon                                  |
 
 ---
 
