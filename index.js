@@ -91,7 +91,7 @@ app.post("/api/jwt", (req, res) => {
 
 
 
-app.post("/api/addblog", verifyAddBlog, async (req, res) => {
+app.post("/api/addblog", async (req, res) => {
     const blogData = req.body;
     try {
         const result = await collection.insertOne(blogData);
@@ -208,3 +208,6 @@ app.delete("/api/deletecomment/:id", async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+
+
