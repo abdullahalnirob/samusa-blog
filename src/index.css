@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+* {
+  font-family: "Instrument Sans", sans-serif;
+    scroll-behavior: smooth;
+
+}
+body {
+  background-color: #fcfafa;
+}
